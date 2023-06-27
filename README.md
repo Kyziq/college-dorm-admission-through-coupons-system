@@ -1,4 +1,5 @@
 # College Dorm Admission through Coupons (CDAC) System
+> **Note:** This project is made for CSC404 Programming II
 
 The CDAC system is designed to manage the distribution and accumulation of activity-based coupons in a college setting. Students earn coupons by participating in activities around the university, and once a specified number of coupons are accumulated, they qualify for college dorm admission.
 
