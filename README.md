@@ -40,13 +40,11 @@ CDAC-System
 
 The program employs various concepts of C++ programming:
 
-1. **Input/output file concepts**: The program reads a .txt file of activity records, each containing information on the activity and the associated coupon value.
+1. **Input/output file concepts**: The program reads a .txt file of activity records, each representing an activity a student has participated in. Participation in an activity equates to one coupon.
 2. **Pointer concepts**: Pointers are used to keep track of each Student object and their accumulated coupons.
-3. **Function concepts**: Functions are utilized for calculating the total coupons a student has, checking dorm eligibility, and validating coupon authenticity.
-4. **Array and Text file concepts**: An array of Student objects keeps track of all students and their respective coupon counts. Activity data and their associated coupon values are stored in a two-dimensional array and are managed using file handling operations in C++.
+3. **Function concepts**: Functions are utilized for calculating the total coupons a student has and checking dorm eligibility.
+4. **Array and Text file concepts**: An array of Student objects keeps track of all students and their respective coupon counts. The array of activities a student has participated in is managed using file handling operations in C++.
 5. **Exception handling**: The program handles exceptions such as file not found or incorrect file format to ensure smooth operation.
-
-Throughout the program, concepts of pointers, functions, arrays, and text files are seamlessly integrated. Additionally, the program ensures user-friendly interactivity with clear prompts and instructions.
 
 ## Sample Outputs
 
