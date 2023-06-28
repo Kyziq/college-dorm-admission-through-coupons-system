@@ -1,7 +1,7 @@
 # College Dorm Admission through Coupons (CDAC) System
-> **Note:** This project is made for CSC404 Programming II
+> **Note:** This project is part of CSC404 Programming II
 
-The CDAC system is designed to manage the distribution and accumulation of activity-based coupons in a college setting. Students earn coupons by participating in activities around the university, and once a specified number of coupons are accumulated, they qualify for college dorm admission.
+The CDAC system is an application developed to manage the distribution and accumulation of activity-based coupons in a college setting. Students can earn coupons by participating in university activities. Accumulating a certain number of these coupons qualifies them for college dorm admission.
 
 ## Problem Statement
 
@@ -11,9 +11,9 @@ The CDAC system is designed to manage the distribution and accumulation of activ
 
 ## Objectives
 
-1. Develop an efficient, digital system to replace paper and track coupon collection.
-2. Validate coupon authenticity based on the activities participated by the students.
-3. Automate eligibility checks for dorm admission based on accumulated coupon count.
+1. To develop a digital system to efficiently track coupon collection, replacing the existing paper-based method.
+2. To validate the authenticity of the coupons based on the activities a student has participated in.
+3. To automate eligibility checks for dorm admission based on the number of coupons a student has accumulated.
 
 ## Project Structure
 
@@ -22,29 +22,20 @@ CDAC-System
 │
 └───src
 │   │   main.cpp
-│   │   student.cpp
-│   │   activity.cpp
-│   │   dormAdmission.cpp
-│   
-└───include
-│   │   student.h
-│   │   activity.h
-│   │   dormAdmission.h
 │
 └───data
 │   │   students.txt
 │   │   activities.txt
-│   │   dormAdmissionStatus.txt
 ```
 ## Coding
 
-The program employs various concepts of C++ programming:
+The CDAC system employs various concepts of C++ programming:
 
-1. **Input/output file concepts**: The program reads a .txt file of activity records, each representing an activity a student has participated in. Participation in an activity equates to one coupon.
-2. **Pointer concepts**: Pointers are used to keep track of each Student object and their accumulated coupons.
-3. **Function concepts**: Functions are utilized for calculating the total coupons a student has and checking dorm eligibility.
-4. **Array and Text file concepts**: An array of Student objects keeps track of all students and their respective coupon counts. The array of activities a student has participated in is managed using file handling operations in C++.
-5. **Exception handling**: The program handles exceptions such as file not found or incorrect file format to ensure smooth operation.
+1. **Input/output file concepts:** The application reads from a .txt file that contains the records of students, each entry representing a student with their ID, name, and the number of coupons they've collected.
+2. **Vector concepts:** Vectors are used to dynamically manage an array of Student objects.
+3. **Pointer concepts:** Pointers are used to handle Student objects when updating their coupon count.
+4. **Function concepts:** Functions are utilized for tasks like loading students from a file, saving students to a file, finding a student by their ID, and displaying the menu.
+5. **File handling concepts:** Student data is saved and loaded using text files, facilitating persistent data between different runs of the application.
 
 ## Sample Outputs
 
@@ -53,8 +44,7 @@ The program employs various concepts of C++ programming:
 
 For more information, please check the code files in the `src` and `include` directories, and the data in the `data` directory.
 
-## Classes
+## Structs
 
 - `Student`: This class represents students, with attributes for Name, ID, and Coupon count.
 - `Activity`: This class represents university activities, with attributes for Name and ID
-- `DormAdmission`: This class checks and manages dorm admission eligibility of students. It includes a `Student` and a status for Eligibility.
