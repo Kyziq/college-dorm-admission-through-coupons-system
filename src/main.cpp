@@ -14,6 +14,8 @@ TODO:
 #include <vector>
 #include <sstream>
 
+const int MAX_ACTIVITIES = 10;
+
 using namespace std;
 
 struct Student
@@ -66,6 +68,33 @@ Student *findStudentById(const string &id, vector<Student> &students)
     return nullptr;
 }
 
+void readActivityInfoFromFile(Activity activities[], int &numActivities)
+{
+    ifstream inputFile("../data/activities.txt");
+    if (inputFile.is_open())
+    {
+        numActivities = 0;
+        string line;
+        while (getline(inputFile, line))
+        {
+            istringstream iss(line);
+            if (iss >> activities[numActivities].id >> activities[numActivities].name)
+            {
+                numActivities++;
+            }
+            else
+            {
+                cout << "Error reading activity information from file." << endl;
+            }
+        }
+        inputFile.close();
+    }
+    else
+    {
+        cout << "Unable to open file for reading." << endl;
+    }
+}
+
 void displayMenu()
 {
     cout << "Welcome to College Dorm Admission through Coupons (CDAC) System!\n";
@@ -78,6 +107,7 @@ void displayMenu()
 int main()
 {
     vector<Student> students = loadStudents();
+    Activity activityInfo[MAX_ACTIVITIES];
 
     while (true)
     {
