@@ -1,11 +1,21 @@
 /*
-College Dorm Admission through Coupons (CDAC) System
+================================================================================
+            COLLEGE DORM ADMISSION THROUGH COUPONS (CDAC) SYSTEM
 
-TODO:
-1. Add option to exit looping for user
-2. Add option to view all students registered
-3. Add option to view all activities registered
+Developed by:
+MUHAMAD ADIB ASYRAAF BIN AZIS	            2023126433	RCDCS2513B	CS251
+MUHAMMAD KHAIRUL HAZIQ BIN MOHAMAD KHAIRI	2023164629	RCDCS2513B	CS251
+MUHAMMAD 'ARIF BIN SALLEH HUDIN	            2023389011  RCDCS2513B	CS251
+MUHAMMAD AYSAR BIN MAHMAD YUSUP	            2023189277	RCDCS2513B	CS251
 
+Course: CSC404 Programming II
+
+The CDAC system is an application developed to manage the distribution and
+accumulation of activity-based coupons in a college setting. Students can
+earn coupons by participating in university activities. Accumulating a
+certain number of these coupons qualifies them for college dorm admission.
+
+================================================================================
 */
 
 #include <iostream>
@@ -17,6 +27,9 @@ TODO:
 const int MAX_ACTIVITIES = 10;
 
 using namespace std;
+
+const string STUDENTS_FILE = "../data/students.txt";
+const string ACTIVITIES_FILE = "../data/activities.txt";
 
 struct Student
 {
@@ -33,7 +46,7 @@ struct Activity
 
 vector<Student> loadStudents()
 {
-    ifstream file("../data/students.txt");
+    ifstream file(STUDENTS_FILE);
     vector<Student> students;
     string line;
     while (getline(file, line))
@@ -51,7 +64,7 @@ vector<Student> loadStudents()
 
 void saveStudents(const vector<Student> &students)
 {
-    ofstream file("../data/students.txt");
+    ofstream file(ACTIVITIES_FILE);
     for (const Student &student : students)
     {
         file << student.id << ',' << student.name << ',' << student.coupons << '\n';
