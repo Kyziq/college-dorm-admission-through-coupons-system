@@ -23,6 +23,7 @@ certain number of these coupons qualifies them for college dorm admission.
 #include <string>
 #include <vector>
 #include <sstream>
+#include <stdexcept>
 
 const int MAX_ACTIVITIES = 10;
 
@@ -83,29 +84,47 @@ Student *findStudentById(const string &id, vector<Student> &students)
 
 void readActivityInfoFromFile(Activity activities[], int &numActivities)
 {
-    ifstream inputFile("../data/activities.txt");
-    if (inputFile.is_open())
+    ifstream inputFile(ACTIVITIES_FILE);
+    if (!inputFile)
     {
-        numActivities = 0;
-        string line;
-        while (getline(inputFile, line))
+        throw runtime_error("Unable to open activities file for reading.");
+    }
+
+    numActivities = 0;
+    string line;
+    while (getline(inputFile, line))
+    {
+        istringstream iss(line);
+        if (iss >> activities[numActivities].id >> activities[numActivities].name)
         {
-            istringstream iss(line);
-            if (iss >> activities[numActivities].id >> activities[numActivities].name)
-            {
-                numActivities++;
-            }
-            else
-            {
-                cout << "Error reading activity information from file." << endl;
-            }
+            numActivities++;
         }
-        inputFile.close();
+        else
+        {
+            throw runtime_error("Error reading activity information from file.");
+        }
     }
-    else
+    inputFile.close();
+}
+
+void viewAllStudents(const vector<Student> &students)
+{
+    cout << "Registered Students:\n";
+    for (const Student &student : students)
     {
-        cout << "Unable to open file for reading." << endl;
+        cout << "ID: " << student.id << ", Name: " << student.name << ", Coupons: " << student.coupons << '\n';
     }
+    cout << endl;
+}
+
+void viewAllActivities(const Activity activities[], int numActivities)
+{
+    cout << "Registered Activities:\n";
+    for (int i = 0; i < numActivities; i++)
+    {
+        cout << "ID: " << activities[i].id << ", Name: " << activities[i].name << '\n';
+    }
+    cout << endl;
 }
 
 void displayMenu()
@@ -114,6 +133,9 @@ void displayMenu()
     cout << "1 - Register a new student\n";
     cout << "2 - Add an activity coupon to a student\n";
     cout << "3 - Check current dorm eligibility status\n";
+    cout << "4 - View all registered students\n";
+    cout << "5 - View all registered activities\n";
+    cout << "6 - Exit\n";
     cout << "Enter your choice: ";
 }
 
@@ -121,6 +143,9 @@ int main()
 {
     vector<Student> students = loadStudents();
     Activity activityInfo[MAX_ACTIVITIES];
+
+    int numActivities = 0;
+    readActivityInfoFromFile(activityInfo, numActivities);
 
     while (true)
     {
@@ -184,6 +209,19 @@ int main()
                 cout << "Student not found!\n";
             }
             cout << endl;
+        }
+        else if (choice == 4)
+        {
+            viewAllStudents(students);
+        }
+        else if (choice == 5)
+        {
+            viewAllActivities(activityInfo, numActivities);
+        }
+        else if (choice == 6)
+        {
+            cout << "Exiting the program.\n";
+            break;
         }
     }
     return 0;
