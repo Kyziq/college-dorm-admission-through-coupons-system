@@ -84,16 +84,21 @@ void writeStudentInfo(const Student students[], int numStudent)
 }
 
 // Function to read student information from a file
-void readStudentInfo(const Student students[], int numStudent, ifstream &inData)
+void readStudentInfo(const Student students[], int numStudent)
 {
-    for(int i=0; i<numStudent; i++)
+    ifstream inputS;
+    inputS.open("students.txt")
+    int i = 0;
+    while(!inputS.eof() && i<numStudent)
     {
-        inData >> students[i].studentID;
-        getline(inData,students[i].studentName,',');
-        inData >> students[i].activityCode;
-        inData >> students[i].couponCount;
+        getline(inputS,students[i].studentName,',');
+        inputS >> students[i].studentID;
+        inputS >> students[i].activityCode;
+        inputS >> students[i].couponCount;
         cin.ignore();
+        i++;
     }
+    inputS.close();
 }
 
 // Function to read activity information from a file
