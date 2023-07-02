@@ -84,8 +84,16 @@ void writeStudentInfo(const Student students[], int numStudent)
 }
 
 // Function to read student information from a file
-void readStudentInfo(const Student students[], int numStudent)
+void readStudentInfo(const Student students[], int numStudent, ifstream &inData)
 {
+    for(int i=0; i<numStudent; i++)
+    {
+        inData >> students[i].studentID;
+        getline(inData,students[i].studentName,',');
+        inData >> students[i].activityCode;
+        inData >> students[i].couponCount;
+        cin.ignore();
+    }
 }
 
 // Function to read activity information from a file
