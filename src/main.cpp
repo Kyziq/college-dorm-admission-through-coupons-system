@@ -65,7 +65,7 @@ vector<Student> loadStudents()
 
 void saveStudents(const vector<Student> &students)
 {
-    ofstream file(ACTIVITIES_FILE);
+    ofstream file(STUDENTS_FILE);
     for (const Student &student : students)
     {
         file << student.id << ',' << student.name << ',' << student.coupons << '\n';
