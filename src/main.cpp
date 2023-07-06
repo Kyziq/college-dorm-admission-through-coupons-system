@@ -232,6 +232,10 @@ int main()
             cout << "Exiting the program.\n";
             break;
         }
+        else
+        {
+            cout << "Invalid choice. Please enter from 1 to 6!\n";
+        }
     }
     return 0;
 }
