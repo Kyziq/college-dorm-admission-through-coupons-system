@@ -26,6 +26,7 @@ certain number of these coupons qualifies them for college dorm admission.
 #include <stdexcept>
 
 const int MAX_ACTIVITIES = 10;
+const int MAX_STUDENTS = 50;
 
 using namespace std;
 
@@ -80,6 +81,27 @@ Student *findStudentById(const string &id, vector<Student> &students)
             return &student;
     }
     return nullptr;
+}
+
+// Function to read student information from a file
+void readStudentInfo(const Student students[], int numStudent)
+{
+    ifstream inputS;
+    inputS.open(STUDENTS_FILE);
+    if (!inputFile)
+    {
+        throw runtime_error("Unable to open activities file for reading.");
+    }
+    int i = 0;
+    while (!inputS.eof() && i < numStudent)
+    {
+        inputS >> students[i].id;
+        getline(inputS, students[i].name, ',');
+        inputS >> students[i].coupons;
+        cin.ignore();
+        i++;
+    }
+    inputS.close();
 }
 
 void readActivityInfoFromFile(Activity activities[], int &numActivities)
@@ -143,9 +165,13 @@ int main()
 {
     vector<Student> students = loadStudents();
     Activity activityInfo[MAX_ACTIVITIES];
+    Student students[MAX_STUDENTS];
 
+    int numStudents;
     int numActivities = 0;
+
     readActivityInfoFromFile(activityInfo, numActivities);
+    readStudentInfo(students, numStudents);
 
     while (true)
     {
