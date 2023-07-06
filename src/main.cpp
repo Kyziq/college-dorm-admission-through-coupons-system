@@ -116,15 +116,11 @@ void readActivityInfoFromFile(Activity activities[], int &numActivities)
     string line;
     while (getline(inputFile, line))
     {
-        istringstream iss(line);
-        if (iss >> activities[numActivities].id >> activities[numActivities].name)
-        {
-            numActivities++;
-        }
-        else
-        {
-            throw runtime_error("Error reading activity information from file.");
-        }
+        stringstream ss(line);
+
+        getline(ss, activities[numActivities].id, ',');
+        getline(ss, activities[numActivities].name, ',');
+        numActivities++;
     }
     inputFile.close();
 }
