@@ -58,7 +58,7 @@ void loadStudents()
     ifstream inputFile(STUDENTS_FILE);
     if (!inputFile)
     {
-        throw runtime_error("Unable to open activities file for reading.");
+        throw runtime_error("Unable to open students file for reading.");
     }
 
     string line;
@@ -152,8 +152,15 @@ void displayMenu()
 
 int main()
 {
-    loadStudents();
-    loadActivities();
+    try
+    {
+        loadStudents();
+        loadActivities();
+    }
+    catch (const runtime_error &e)
+    {
+        std::cerr << e.what() << '\n';
+    }
 
     while (true)
     {
