@@ -118,7 +118,17 @@ Student *findStudentById(const string &id)
     return nullptr;
 }
 
-void viewAllStudents()
+Activity *findActivityById(const string &id)
+{
+    for (int i = 0; i < numActivities; i++)
+    {
+        if (activities[i].id == id)
+            return &activities[i];
+    }
+    return nullptr;
+}
+
+void displayAllStudents()
 {
     cout << "Registered Students:\n";
     for (int i = 0; i < numStudents; i++)
@@ -128,7 +138,7 @@ void viewAllStudents()
     cout << endl;
 }
 
-void viewAllActivities()
+void displayAllActivities()
 {
     cout << "Registered Activities:\n";
     for (int i = 0; i < numActivities; i++)
@@ -180,15 +190,28 @@ int main()
         }
         else if (choice == 2)
         {
-            string id;
+            string stuId, actId;
             cout << "Enter student ID: ";
-            cin >> id;
-            Student *student = findStudentById(id);
+            cin >> stuId;
+
+            Student *student = findStudentById(stuId);
             if (student)
             {
-                student->coupons++;
-                saveStudents();
-                cout << "Coupon added!\n";
+                displayAllActivities();
+                cout << "Enter the activity ID that the student join: ";
+                cin >> actId;
+
+                Activity *activity = findActivityById(actId);
+                if (activity)
+                {
+                    student->coupons++;
+                    saveStudents();
+                    cout << "Coupon added!\n";
+                }
+                else
+                {
+                    cout << "Activity not found!\n";
+                }
             }
             else
             {
@@ -221,11 +244,11 @@ int main()
         }
         else if (choice == 4)
         {
-            viewAllStudents();
+            displayAllStudents();
         }
         else if (choice == 5)
         {
-            viewAllActivities();
+            displayAllActivities();
         }
         else if (choice == 6)
         {
