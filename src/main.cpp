@@ -43,6 +43,7 @@ struct Activity
 // Global Variables
 const int MAX_ACTIVITIES = 10;
 const int MAX_STUDENTS = 50;
+const int MAX_STUDENTS_ACTIVITIES = 50;
 const string STUDENTS_FILE = "../data/students.txt";
 const string ACTIVITIES_FILE = "../data/activities.txt";
 
@@ -51,6 +52,8 @@ Student students[MAX_STUDENTS];
 
 int numActivities = 0;
 Activity activities[MAX_ACTIVITIES];
+
+int coupon[MAX_STUDENTS_ACTIVITIES][MAX_STUDENTS_ACTIVITIES] = {0};
 
 // User-defined Functions
 void loadStudents()
@@ -73,6 +76,7 @@ void loadStudents()
         ss >> coupons;
 
         students[numStudents] = {id, name, coupons};
+        coupon[numStudents][0] = coupons;
         numStudents++;
     }
     inputFile.close();
@@ -93,6 +97,7 @@ void loadActivities()
 
         getline(ss, activities[numActivities].id, ',');
         getline(ss, activities[numActivities].name, ',');
+        coupon[0][numActivities] = 0;
         numActivities++;
     }
     inputFile.close();
@@ -147,6 +152,54 @@ void displayAllActivities()
     }
     cout << endl;
 }
+int findStudentIndex(const Student *student)
+{
+    for (int i = 0; i < numStudents; i++)
+    {
+        if (&students[i] == student)
+        {
+            return 1;
+        }
+    }
+    return -1;
+}
+
+int findActivityIndex(const Activity *activity)
+{
+    for (int i = 0; i < numActivities; i++)
+    {
+        if (&activity[i] == activity)
+        {
+            return 1;
+        }
+    }
+    return -1;
+}
+
+void displayCouponCount()
+{
+    string id;
+    cout << "Enter student ID: ";
+    cin >> id;
+    cin.ignore();
+
+    Student *student = findStudentById(id);
+    if (student)
+    {
+        cout << "Coupon Counts for Student ID " << student->id << ":\n";
+        for (int i = 0; i < numActivities; i++)
+        {
+            int studentIndex = findStudentIndex(student);
+            int activityIndex = findActivityIndex(&activities[i]);
+            cout << "Activity ID: " << activities[i].id << ", Coupons: " << coupon[studentIndex][activityIndex] << '\n';
+        }
+    }
+    else
+    {
+        cout << "Student not found!\n";
+    }
+    cout << endl;
+}
 
 void displayMenu()
 {
@@ -156,7 +209,8 @@ void displayMenu()
     cout << "3 - Check current dorm eligibility status\n";
     cout << "4 - View all registered students\n";
     cout << "5 - View all registered activities\n";
-    cout << "6 - Exit\n";
+    cout << "6 - View coupon counts\n";
+    cout << "7 - Exit\n";
     cout << "Enter your choice: ";
 }
 
@@ -211,7 +265,10 @@ int main()
                 Activity *activity = findActivityById(actId);
                 if (activity)
                 {
+                    int studentIndex = findStudentIndex(student);
+                    int activityIndex = findActivityIndex(activity);
                     student->coupons++;
+                    coupon[studentIndex][activityIndex]++;
                     saveStudents();
                     cout << "Coupon added!\n";
                 }
@@ -258,6 +315,10 @@ int main()
             displayAllActivities();
         }
         else if (choice == 6)
+        {
+            displayCouponCount();
+        }
+        else if (choice == 7)
         {
             cout << "Exiting the program.\n";
             break;
