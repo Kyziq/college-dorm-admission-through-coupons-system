@@ -88,6 +88,7 @@ void loadStudents()
 void loadActivities()
 {
     ifstream inputFile(ACTIVITIES_FILE);
+    // Exception handling: throw an error if the file cannot be opened
     if (!inputFile)
     {
         throw runtime_error("Unable to open activities file for reading.");
