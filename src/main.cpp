@@ -143,19 +143,43 @@ Activity *findActivityById(const string &id)
         if (activities[i].id == id)
             return &activities[i]; // return the activity
     }
-    // If activityis not found, throw an exception
+    // If activity is not found, throw an exception
     throw runtime_error("Activity not found.");
 }
 
 // Print the details of all students
-void displayAllStudents()
+void displayAllStudents(int choice)
 {
-    cout << "Registered Students:\n";
-    for (int i = 0; i < numStudents; i++)
+    if (choice == 1)
     {
-        cout << "ID: " << students[i].id << ", Name: " << students[i].name << ", Coupons: " << students[i].coupons << '\n';
+        string stuId, actId;
+        cout << "Enter student ID: ";
+        cin >> stuId;
+
+        // Find the student in the students array
+        Student *student = findStudentById(stuId);
+        if (student)
+        {
+            cout << "ID: " << student->id << ", Name: " << student->name << ", Coupons: " << student->coupons << '\n\n';
+        }
+        else
+        {
+            cerr << "Student not found.\n";
+        }
     }
-    cout << endl;
+    else if (choice == 2)
+    {
+        cout << "Registered Students:\n";
+        for (int i = 0; i < numStudents; i++)
+        {
+            cout << "ID: " << students[i].id << ", Name: " << students[i].name << ", Coupons: " << students[i].coupons << '\n';
+        }
+        cout << endl;
+    }
+    else
+    {
+        cerr << "Invalid choice. Please enter from 1 to 2.";
+    }
 }
 
 // Print the details of all activities
@@ -192,7 +216,7 @@ int main()
              << "1 - Register a new student\n"
              << "2 - Add a coupon to a student\n"
              << "3 - Check a student's dorm eligibility\n"
-             << "4 - Display all students\n"
+             << "4 - Display student(s)\n"
              << "5 - Display all activities\n"
              << "6 - Exit the program\n"
              << "Enter your choice: ";
@@ -215,7 +239,6 @@ int main()
                 students[numStudents] = {stuId, stuName, 0};
                 numStudents++;
                 saveStudents();
-
                 cout << "The student has been registered!\n\n";
             }
             else if (choice == 2) // Add coupon to student
@@ -279,7 +302,10 @@ int main()
             }
             else if (choice == 4) // Display all students
             {
-                displayAllStudents();
+                int choice4;
+                cout << "Do you want to display a student (Input 1) or all students (Input 2)? : ";
+                cin >> choice4;
+                displayAllStudents(choice4);
             }
             else if (choice == 5) // Display all activities
             {
@@ -297,7 +323,7 @@ int main()
         }
         catch (const runtime_error &e)
         {
-            cerr << "An error occurred: " << e.what() << '\n';
+            cerr << "An error occurred: " << e.what() << "\n\n";
         }
     }
     return 0;
