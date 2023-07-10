@@ -44,16 +44,20 @@ struct Activity
 // Global constants and arrays to hold students and activities
 const int MAX_ACTIVITIES = 10;
 const int MAX_STUDENTS = 50;
+
 Student students[MAX_STUDENTS];
 Activity activities[MAX_ACTIVITIES];
+string participations[MAX_STUDENTS][MAX_ACTIVITIES];
 
 // Global variables for the current number of students and activities
 int numStudents = 0;
 int numActivities = 0;
+int numParticipations[MAX_STUDENTS] = {0};
 
 // Global constants for the paths to the data files
 const string STUDENTS_FILE = "../data/students.txt";
 const string ACTIVITIES_FILE = "../data/activities.txt";
+const string PARTICIPATIONS_FILE = "../data/participations.txt";
 
 /***** Helper Functions *****/
 
@@ -107,6 +111,47 @@ void loadActivities()
     inputFile.close();
 }
 
+// Function to load participation data from the file
+void loadParticipations()
+{
+    ifstream inputFile(PARTICIPATIONS_FILE);
+    // Exception handling: throw an error if the file cannot be opened
+    if (!inputFile)
+    {
+        throw runtime_error("Unable to open participation file for reading.");
+    }
+
+    numStudents = 0; // Reset the number of students
+    string line;
+    while (getline(inputFile, line)) // reading the file line by line
+    {
+        stringstream ss(line);
+        string studentId;
+        string activityId;
+
+        getline(ss, studentId, ',');
+        int i = 0;
+        while (getline(ss, activityId, ','))
+        {
+            if (i >= MAX_ACTIVITIES)
+            {
+                cerr << "Maximum number of activities reached for student " << studentId << ". Ignoring additional activities.\n";
+                break;
+            }
+            participations[numStudents][i] = activityId;
+            i++;
+        }
+        numParticipations[numStudents] = i; // Update the number of participations for the student
+        numStudents++;
+        if (numStudents >= MAX_STUDENTS)
+        {
+            cerr << "Maximum number of students reached. Ignoring additional students.\n";
+            break;
+        }
+    }
+    inputFile.close();
+}
+
 // Function to save students data to the file
 void saveStudents()
 {
@@ -119,6 +164,26 @@ void saveStudents()
     for (int i = 0; i < numStudents; i++)
     {
         outputFile << students[i].id << ',' << students[i].name << ',' << students[i].coupons << '\n';
+    }
+    outputFile.close();
+}
+
+// Function to save participations data to the file
+void saveParticipations()
+{
+    ofstream outputFile(PARTICIPATIONS_FILE);
+    if (!outputFile)
+    {
+        throw runtime_error("Unable to open participations file for writing.");
+    }
+    for (int i = 0; i < numStudents; i++)
+    {
+        outputFile << students[i].id;
+        for (int j = 0; j < numParticipations[i]; j++)
+        {
+            outputFile << ',' << participations[i][j];
+        }
+        outputFile << '\n';
     }
     outputFile.close();
 }
@@ -160,7 +225,7 @@ void displayAllStudents(int choice)
         Student *student = findStudentById(stuId);
         if (student)
         {
-            cout << "ID: " << student->id << ", Name: " << student->name << ", Coupons: " << student->coupons << '\n\n';
+            cout << "ID: " << student->id << ", Name: " << student->name << ", Coupons: " << student->coupons << "\n\n";
         }
         else
         {
@@ -172,7 +237,7 @@ void displayAllStudents(int choice)
         cout << "Registered Students:\n";
         for (int i = 0; i < numStudents; i++)
         {
-            cout << "ID: " << students[i].id << ", Name: " << students[i].name << ", Coupons: " << students[i].coupons << '\n';
+            cout << "ID: " << students[i].id << ", Name: " << students[i].name << ", Coupons: " << students[i].coupons << "\n";
         }
         cout << endl;
     }
@@ -193,13 +258,55 @@ void displayAllActivities()
     cout << endl;
 }
 
+// Function to display student activities
+void displayStudentActivities(const string &id)
+{
+    // Find the student in the students array
+    int studentIndex = -1;
+    for (int i = 0; i < numStudents; i++)
+    {
+        if (students[i].id == id)
+        {
+            studentIndex = i;
+            break;
+        }
+    }
+
+    if (studentIndex != -1) // If the student was found
+    {
+        cout << "Student ID: " << students[studentIndex].id << ", Name: " << students[studentIndex].name << '\n';
+        cout << "Activities Joined:\n";
+
+        // Iterate over the student's participations
+        for (int i = 0; i < numParticipations[studentIndex]; i++)
+        {
+            // Find the activity in the activities array
+            Activity *activity = findActivityById(participations[studentIndex][i]);
+            if (activity) // If the activity was found
+            {
+                cout << "ID: " << activity->id << ", Name: " << activity->name << '\n';
+            }
+            else // If the activity was not found
+            {
+                cerr << "Activity not found!\n";
+            }
+        }
+        cout << '\n';
+    }
+    else // If the student was not found
+    {
+        cerr << "Student not found!\n";
+    }
+}
+
 int main()
 {
-    // Initialization phase: Load students and activities data.
+    // Initialization phase: Load students, activities, and participations data
     try
     {
         loadStudents();
         loadActivities();
+        loadParticipations();
     }
     catch (const runtime_error &e)
     {
@@ -218,7 +325,8 @@ int main()
              << "3 - Check a student's dorm eligibility\n"
              << "4 - Display student(s)\n"
              << "5 - Display all activities\n"
-             << "6 - Exit the program\n"
+             << "6 - Display a student's activities\n"
+             << "7 - Exit the program\n"
              << "Enter your choice: ";
         int choice;
         cin >> choice;
@@ -248,8 +356,17 @@ int main()
                 cin >> stuId;
 
                 // Find the student in the students array
-                Student *student = findStudentById(stuId);
-                if (student)
+                int studentIndex = -1;
+                for (int i = 0; i < numStudents; i++)
+                {
+                    if (students[i].id == stuId)
+                    {
+                        studentIndex = i;
+                        break;
+                    }
+                }
+
+                if (studentIndex != -1) // If the student was found
                 {
                     // Display all activities and get the activity ID from the user
                     displayAllActivities();
@@ -260,11 +377,36 @@ int main()
                     Activity *activity = findActivityById(actId);
                     if (activity) // If the activity was found
                     {
-                        // Add a coupon to the student and save the updated students array to the file
-                        student->coupons++;
-                        saveStudents();
+                        // Check if the student has already participated in this activity
+                        bool alreadyParticipated = false;
+                        for (int i = 0; i < numParticipations[studentIndex]; i++)
+                        {
+                            if (participations[studentIndex][i] == actId)
+                            {
+                                alreadyParticipated = true;
+                                break;
+                            }
+                        }
 
-                        cout << "A coupon has been added to the student!\n\n";
+                        if (alreadyParticipated)
+                        {
+                            cerr << "The student has already participated in this activity.\n\n";
+                        }
+                        else
+                        {
+                            // Add a coupon to the student
+                            students[studentIndex].coupons++;
+
+                            // Add the activity to the student's participations
+                            participations[studentIndex][numParticipations[studentIndex]] = actId;
+                            numParticipations[studentIndex]++;
+
+                            // Save the updated students and participations data to the files
+                            saveStudents();
+                            saveParticipations();
+
+                            cout << "A coupon has been added to the student, and the activity has been added to the student's participations.\n\n";
+                        }
                     }
                     else // If the activity was not found
                     {
@@ -311,7 +453,14 @@ int main()
             {
                 displayAllActivities();
             }
-            else if (choice == 6) // Exit
+            else if (choice == 6) // Display student activities
+            {
+                string id;
+                cout << "Enter student ID: ";
+                cin >> id;
+                displayStudentActivities(id);
+            }
+            else if (choice == 7) // Exit
             {
                 cout << "Exiting the program.\n";
                 break;
