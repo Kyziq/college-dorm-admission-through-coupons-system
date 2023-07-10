@@ -26,7 +26,8 @@ certain number of these coupons qualifies them for college dorm admission.
 
 using namespace std;
 
-// Struct
+/***** Struct *****/
+
 struct Student
 {
     string id;
@@ -40,29 +41,34 @@ struct Activity
     string name;
 };
 
-// Global Variables
+// Global constants and arrays to hold students and activities
 const int MAX_ACTIVITIES = 10;
 const int MAX_STUDENTS = 50;
+Student students[MAX_STUDENTS];
+Activity activities[MAX_ACTIVITIES];
+
+// Global variables for the current number of students and activities
+int numStudents = 0;
+int numActivities = 0;
+
+// Global constants for the paths to the data files
 const string STUDENTS_FILE = "../data/students.txt";
 const string ACTIVITIES_FILE = "../data/activities.txt";
 
-int numStudents = 0;
-Student students[MAX_STUDENTS];
+/***** Helper Functions *****/
 
-int numActivities = 0;
-Activity activities[MAX_ACTIVITIES];
-
-// User-defined Functions
+// Function to load students data from the file
 void loadStudents()
 {
     ifstream inputFile(STUDENTS_FILE);
+    // Exception handling: throw an error if the file cannot be opened
     if (!inputFile)
     {
         throw runtime_error("Unable to open students file for reading.");
     }
 
     string line;
-    while (getline(inputFile, line))
+    while (getline(inputFile, line)) // reading the file line by line
     {
         stringstream ss(line);
         string id, name;
@@ -77,6 +83,8 @@ void loadStudents()
     }
     inputFile.close();
 }
+
+// Function to load activites data from the file
 void loadActivities()
 {
     ifstream inputFile(ACTIVITIES_FILE);
@@ -87,7 +95,7 @@ void loadActivities()
 
     numActivities = 0;
     string line;
-    while (getline(inputFile, line))
+    while (getline(inputFile, line)) // reading the file line by line
     {
         stringstream ss(line);
 
@@ -98,9 +106,11 @@ void loadActivities()
     inputFile.close();
 }
 
+// Function to save students data to the file
 void saveStudents()
 {
     ofstream outputFile(STUDENTS_FILE);
+    // Exception handling: throw an error if the file cannot be opened
     if (!outputFile)
     {
         throw runtime_error("Unable to open students file for writing.");
@@ -112,26 +122,31 @@ void saveStudents()
     outputFile.close();
 }
 
+// Find a student by their id
 Student *findStudentById(const string &id)
 {
     for (int i = 0; i < numStudents; i++)
     {
         if (students[i].id == id)
-            return &students[i];
+            return &students[i]; // return the student
     }
+    // If student is not found, throw an exception
     throw runtime_error("Student not found.");
 }
 
+// Find an activity by their id
 Activity *findActivityById(const string &id)
 {
     for (int i = 0; i < numActivities; i++)
     {
         if (activities[i].id == id)
-            return &activities[i];
+            return &activities[i]; // return the activity
     }
-    return nullptr;
+    // If activityis not found, throw an exception
+    throw runtime_error("Activity not found.");
 }
 
+// Print the details of all students
 void displayAllStudents()
 {
     cout << "Registered Students:\n";
@@ -142,6 +157,7 @@ void displayAllStudents()
     cout << endl;
 }
 
+// Print the details of all activities
 void displayAllActivities()
 {
     cout << "Registered Activities:\n";
@@ -152,20 +168,9 @@ void displayAllActivities()
     cout << endl;
 }
 
-void displayMenu()
-{
-    cout << "Welcome to College Dorm Admission through Coupons (CDAC) System!\n";
-    cout << "1 - Register a new student\n";
-    cout << "2 - Add an activity coupon to a student\n";
-    cout << "3 - Check current dorm eligibility status\n";
-    cout << "4 - View all registered students\n";
-    cout << "5 - View all registered activities\n";
-    cout << "6 - Exit\n";
-    cout << "Enter your choice: ";
-}
-
 int main()
 {
+    // Initialization phase: Load students and activities data.
     try
     {
         loadStudents();
@@ -173,71 +178,87 @@ int main()
     }
     catch (const runtime_error &e)
     {
-        cerr << e.what() << '\n';
+        // If any file operation fails, print error message and exit the program.
+        cerr << "Error while loading data: " << e.what() << '\n';
+        return -1;
     }
 
+    // Run the program until the user exits
     while (true)
     {
+        // Display the main menu and get the user's choice
+        cout << "Welcome to the College Dorm Admission through Coupons (CDAC) System!\n"
+             << "1 - Register a new student\n"
+             << "2 - Add a coupon to a student\n"
+             << "3 - Check a student's dorm eligibility\n"
+             << "4 - Display all students\n"
+             << "5 - Display all activities\n"
+             << "6 - Exit the program\n"
+             << "Enter your choice: ";
         int choice;
-        displayMenu();
         cin >> choice;
 
         try
         {
-            if (choice == 1)
+            if (choice == 1) // Register a new student
             {
+                // Get the new student's information from the user
+                string stuId, stuName;
+                cout << "Enter the new student's ID: ";
+                cin >> stuId;
+                cin.ignore(); // Clear the newline character from the input buffer
+                cout << "Enter the new student's name: ";
+                getline(cin, stuName);
 
-                string id, name;
-                cout << "Enter student ID: ";
-                cin >> id;
-                cin.ignore();
-
-                cout << "Enter student name: ";
-                getline(cin, name);
-
-                students[numStudents] = {id, name, 0};
+                // Add the new student to the students array and save the updated students array to the file
+                students[numStudents] = {stuId, stuName, 0};
                 numStudents++;
                 saveStudents();
 
-                cout << "Student registered!\n";
-                cout << endl;
+                cout << "The student has been registered!\n\n";
             }
-            else if (choice == 2)
+            else if (choice == 2) // Add coupon to student
             {
                 string stuId, actId;
                 cout << "Enter student ID: ";
                 cin >> stuId;
 
+                // Find the student in the students array
                 Student *student = findStudentById(stuId);
                 if (student)
                 {
+                    // Display all activities and get the activity ID from the user
                     displayAllActivities();
-                    cout << "Enter the activity ID that the student join: ";
+                    cout << "Enter the activity ID that the student participated in: ";
                     cin >> actId;
 
+                    // Find the activity in the activities array
                     Activity *activity = findActivityById(actId);
-                    if (activity)
+                    if (activity) // If the activity was found
                     {
+                        // Add a coupon to the student and save the updated students array to the file
                         student->coupons++;
                         saveStudents();
-                        cout << "Coupon added!\n";
+
+                        cout << "A coupon has been added to the student!\n";
                     }
-                    else
+                    else // If the activity was not found
                     {
-                        cout << "Activity not found!\n";
+                        cerr << "Activity not found!\n";
                     }
                 }
                 else
                 {
-                    cout << "Student not found!\n";
+                    cerr << "Student not found!\n\n";
                 }
-                cout << endl;
             }
-            else if (choice == 3)
+            else if (choice == 3) // Check student dorm status
             {
                 string id;
                 cout << "Enter student ID: ";
                 cin >> id;
+
+                // Find the student in the students array
                 Student *student = findStudentById(id);
                 if (student)
                 {
@@ -252,31 +273,30 @@ int main()
                 }
                 else
                 {
-                    cout << "Student not found!\n";
+                    cerr << "Student not found!\n\n";
                 }
-                cout << endl;
             }
-            else if (choice == 4)
+            else if (choice == 4) // Display all students
             {
                 displayAllStudents();
             }
-            else if (choice == 5)
+            else if (choice == 5) // Display all activities
             {
                 displayAllActivities();
             }
-            else if (choice == 6)
+            else if (choice == 6) // Exit
             {
                 cout << "Exiting the program.\n";
                 break;
             }
             else
             {
-                cout << "Invalid choice. Please enter from 1 to 6!\n";
+                cerr << "Invalid choice. Please enter from 1 to 6!\n";
             }
         }
         catch (const runtime_error &e)
         {
-            cerr << e.what() << '\n';
+            cerr << "An error occurred: " << e.what() << '\n';
         }
     }
     return 0;
