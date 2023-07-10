@@ -61,6 +61,7 @@ const string PARTICIPATIONS_FILE = "../data/participations.txt";
 
 /***** Helper Functions *****/
 
+/** Helper Functions - Data Loading **/
 // Function to load students data from the file
 void loadStudents()
 {
@@ -152,6 +153,7 @@ void loadParticipations()
     inputFile.close();
 }
 
+/** Helper Functions - Data Saving and Searching **/
 // Function to save students data to the file
 void saveStudents()
 {
@@ -212,39 +214,34 @@ Activity *findActivityById(const string &id)
     throw runtime_error("Activity not found.");
 }
 
+/** Display Functions **/
 // Print the details of all students
-void displayAllStudents(int choice)
+void displaySingleStudent()
 {
-    if (choice == 1)
-    {
-        string stuId, actId;
-        cout << "Enter student ID: ";
-        cin >> stuId;
+    string stuId, actId;
+    cout << "Enter student ID: ";
+    cin >> stuId;
 
-        // Find the student in the students array
-        Student *student = findStudentById(stuId);
-        if (student)
-        {
-            cout << "ID: " << student->id << ", Name: " << student->name << ", Coupons: " << student->coupons << "\n\n";
-        }
-        else
-        {
-            cerr << "Student not found.\n";
-        }
-    }
-    else if (choice == 2)
+    // Find the student in the students array
+    const Student *student = findStudentById(stuId);
+    if (student)
     {
-        cout << "Registered Students:\n";
-        for (int i = 0; i < numStudents; i++)
-        {
-            cout << "ID: " << students[i].id << ", Name: " << students[i].name << ", Coupons: " << students[i].coupons << "\n";
-        }
-        cout << endl;
+        cout << "ID: " << student->id << ", Name: " << student->name << ", Coupons: " << student->coupons << "\n\n";
     }
     else
     {
-        cerr << "Invalid choice. Please enter from 1 to 2.";
+        cerr << "Student not found.\n";
     }
+}
+void displayAllStudents()
+{
+    cout << "Registered Students:\n";
+    for (int i = 0; i < numStudents; i++)
+    {
+        const Student &student = students[i];
+        cout << "ID: " << student.id << ", Name: " << student.name << ", Coupons: " << student.coupons << "\n";
+    }
+    cout << endl;
 }
 
 // Print the details of all activities
@@ -288,14 +285,16 @@ void displayStudentActivities(const string &id)
             }
             else // If the activity was not found
             {
-                cerr << "Activity not found!\n";
+                // If activity is not found, throw an exception
+                throw runtime_error("Activity not found.");
             }
         }
         cout << '\n';
     }
-    else // If the student was not found
+    else
     {
-        cerr << "Student not found!\n";
+        // If student is not found, throw an exception
+        throw runtime_error("Student not found.");
     }
 }
 
@@ -447,7 +446,14 @@ int main()
                 int choice4;
                 cout << "Do you want to display a student (Input 1) or all students (Input 2)? : ";
                 cin >> choice4;
-                displayAllStudents(choice4);
+                if (choice4 == 1)
+                {
+                    displaySingleStudent();
+                }
+                else if (choice4 == 2)
+                {
+                    displayAllStudents();
+                }
             }
             else if (choice == 5) // Display all activities
             {
