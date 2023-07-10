@@ -101,6 +101,10 @@ void loadActivities()
 void saveStudents()
 {
     ofstream outputFile(STUDENTS_FILE);
+    if (!outputFile)
+    {
+        throw runtime_error("Unable to open students file for writing.");
+    }
     for (int i = 0; i < numStudents; i++)
     {
         outputFile << students[i].id << ',' << students[i].name << ',' << students[i].coupons << '\n';
@@ -115,7 +119,7 @@ Student *findStudentById(const string &id)
         if (students[i].id == id)
             return &students[i];
     }
-    return nullptr;
+    throw runtime_error("Student not found.");
 }
 
 Activity *findActivityById(const string &id)
@@ -169,7 +173,7 @@ int main()
     }
     catch (const runtime_error &e)
     {
-        std::cerr << e.what() << '\n';
+        cerr << e.what() << '\n';
     }
 
     while (true)
@@ -178,93 +182,101 @@ int main()
         displayMenu();
         cin >> choice;
 
-        if (choice == 1)
+        try
         {
-            string id, name;
-            cout << "Enter student ID: ";
-            cin >> id;
-            cin.ignore();
+            if (choice == 1)
+            {
 
-            cout << "Enter student name: ";
-            getline(cin, name);
+                string id, name;
+                cout << "Enter student ID: ";
+                cin >> id;
+                cin.ignore();
 
-            students[numStudents] = {id, name, 0};
-            numStudents++;
-            saveStudents();
+                cout << "Enter student name: ";
+                getline(cin, name);
 
-            cout << "Student registered!\n";
-            cout << endl;
-        }
-        else if (choice == 2)
-        {
-            string stuId, actId;
-            cout << "Enter student ID: ";
-            cin >> stuId;
+                students[numStudents] = {id, name, 0};
+                numStudents++;
+                saveStudents();
 
-            Student *student = findStudentById(stuId);
-            if (student)
+                cout << "Student registered!\n";
+                cout << endl;
+            }
+            else if (choice == 2)
+            {
+                string stuId, actId;
+                cout << "Enter student ID: ";
+                cin >> stuId;
+
+                Student *student = findStudentById(stuId);
+                if (student)
+                {
+                    displayAllActivities();
+                    cout << "Enter the activity ID that the student join: ";
+                    cin >> actId;
+
+                    Activity *activity = findActivityById(actId);
+                    if (activity)
+                    {
+                        student->coupons++;
+                        saveStudents();
+                        cout << "Coupon added!\n";
+                    }
+                    else
+                    {
+                        cout << "Activity not found!\n";
+                    }
+                }
+                else
+                {
+                    cout << "Student not found!\n";
+                }
+                cout << endl;
+            }
+            else if (choice == 3)
+            {
+                string id;
+                cout << "Enter student ID: ";
+                cin >> id;
+                Student *student = findStudentById(id);
+                if (student)
+                {
+                    if (student->coupons >= 10)
+                    {
+                        cout << "Student is eligible for dorm admission!\n";
+                    }
+                    else
+                    {
+                        cout << "Student is not eligible for dorm admission.\n";
+                    }
+                }
+                else
+                {
+                    cout << "Student not found!\n";
+                }
+                cout << endl;
+            }
+            else if (choice == 4)
+            {
+                displayAllStudents();
+            }
+            else if (choice == 5)
             {
                 displayAllActivities();
-                cout << "Enter the activity ID that the student join: ";
-                cin >> actId;
-
-                Activity *activity = findActivityById(actId);
-                if (activity)
-                {
-                    student->coupons++;
-                    saveStudents();
-                    cout << "Coupon added!\n";
-                }
-                else
-                {
-                    cout << "Activity not found!\n";
-                }
+            }
+            else if (choice == 6)
+            {
+                cout << "Exiting the program.\n";
+                break;
             }
             else
             {
-                cout << "Student not found!\n";
+                cout << "Invalid choice. Please enter from 1 to 6!\n";
             }
-            cout << endl;
         }
-        else if (choice == 3)
+        catch (const runtime_error &e)
         {
-            string id;
-            cout << "Enter student ID: ";
-            cin >> id;
-            Student *student = findStudentById(id);
-            if (student)
-            {
-                if (student->coupons >= 10)
-                {
-                    cout << "Student is eligible for dorm admission!\n";
-                }
-                else
-                {
-                    cout << "Student is not eligible for dorm admission.\n";
-                }
-            }
-            else
-            {
-                cout << "Student not found!\n";
-            }
-            cout << endl;
-        }
-        else if (choice == 4)
-        {
-            displayAllStudents();
-        }
-        else if (choice == 5)
-        {
-            displayAllActivities();
-        }
-        else if (choice == 6)
-        {
-            cout << "Exiting the program.\n";
-            break;
-        }
-        else
-        {
-            cout << "Invalid choice. Please enter from 1 to 6!\n";
+            cerr << e.what() << '\n';
         }
     }
     return 0;
