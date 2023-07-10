@@ -240,11 +240,11 @@ int main()
                         student->coupons++;
                         saveStudents();
 
-                        cout << "A coupon has been added to the student!\n";
+                        cout << "A coupon has been added to the student!\n\n";
                     }
                     else // If the activity was not found
                     {
-                        cerr << "Activity not found!\n";
+                        cerr << "Activity not found!\n\n";
                     }
                 }
                 else
@@ -264,11 +264,11 @@ int main()
                 {
                     if (student->coupons >= 10)
                     {
-                        cout << "Student is eligible for dorm admission!\n";
+                        cout << "Student is eligible for dorm admission!\n\n";
                     }
                     else
                     {
-                        cout << "Student is not eligible for dorm admission.\n";
+                        cout << "Student is not eligible for dorm admission.\n\n";
                     }
                 }
                 else
