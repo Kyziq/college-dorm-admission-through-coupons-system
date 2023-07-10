@@ -454,6 +454,10 @@ int main()
                 {
                     displayAllStudents();
                 }
+                else
+                {
+                    cerr << "Invalid choice. Please enter from 1 to 2!\n";
+                }
             }
             else if (choice == 5) // Display all activities
             {
