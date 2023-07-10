@@ -2,4 +2,9 @@ ACT001,Fun Race
 ACT002,Anjung Fun Dance
 ACT003,Kuliah Qiamulail
 ACT004,Typing Competition
-ACT005,FSKM Social Event
+ACT005,Mobile Legend Tournament
+ACT006,Dorm Room Clean
+ACT007,Mini Karisma
+ACT008,CS Sports Day
+ACT009,Program Cool Coding
+ACT010,Self Harm To Self Harmony
