@@ -421,7 +421,7 @@ void displayMenu()
          << "3 - Check a student's dorm eligibility\n"
          << "4 - Display student(s)\n"
          << "5 - Display all activities\n"
-         << "6 - Display a student's activities\n"
+         << "6 - Display the activities that a student joins.\n"
          << "7 - Exit the program\n"
          << "Enter your choice: ";
 }

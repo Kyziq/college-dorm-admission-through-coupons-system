@@ -1,19 +1,20 @@
 # College Dorm Admission through Coupons (CDAC) System
+
 > **Note:** This project is part of CSC404 Programming II
 
 The CDAC system is an application developed to manage the distribution and accumulation of activity-based coupons in a college setting. Students can earn coupons by participating in university activities. Accumulating a certain number of these coupons qualifies them for college dorm admission.
 
 ## Problem Statement
 
-1. Existing paper-based method is error-prone and inefficient.
-2. Difficulty in tracking and validating the number of coupons collected by each student.
-3. Lack of an efficient system to verify student eligibility for dorm admission based on coupon count.
+1. Current manual tracking of activity-based coupons is error-prone and inefficient.
+2. Determining dorm eligibility based on coupon count is difficult and unreliable.
+3. The absence of a centralized system for student registration and coupon allocation causes operational delays.
 
 ## Objectives
 
-1. To develop a digital system to efficiently track coupon collection, replacing the existing paper-based method.
-2. To validate the authenticity of the coupons based on the activities a student has participated in.
-3. To automate eligibility checks for dorm admission based on the number of coupons a student has accumulated.
+1. To develop the CDAC system for efficient and accurate digital management of activity-based coupons, helping minimize errors and reduce processing time.
+2. To enable real-time student registration, coupon updates, and dorm eligibility checks through the CDAC system.
+3. To create a reliable system for transparent student data handling and easy data visualization.
 
 ## Project Structure
 
@@ -26,25 +27,32 @@ CDAC-System
 └───data
 │   │   students.txt
 │   │   activities.txt
+│   │   participations.txt
 ```
+
 ## Coding
 
 The CDAC system employs various concepts of C++ programming:
 
-1. **Input/output file concepts:** The application reads from a .txt file that contains the records of students, each entry representing a student with their ID, name, and the number of coupons they've collected.
-2. **Vector concepts:** Vectors are used to dynamically manage an array of Student objects.
-3. **Pointer concepts:** Pointers are used to handle Student objects when updating their coupon count.
-4. **Function concepts:** Functions are utilized for tasks like loading students from a file, saving students to a file, finding a student by their ID, and displaying the menu.
-5. **File handling concepts:** Student data is saved and loaded using text files, facilitating persistent data between different runs of the application.
+1. FUNCTION CONCEPT
+2. POINTER CONCEPT
+3. STRUCT CONCEPT
+4. TEXT FILES CONCEPT
+5. INPUT OUTPUT FILES CONCEPT
+6. ONE DIMENSIONAL AND TWO-DIMENSIONAL ARRAY CONCEPTS
+7. CALCULATION
+8. EXCEPTION HANDLING (ERROR HANDLING)
 
 ## Sample Outputs
 
-1. Display of all student data including name, ID, and coupon count.
-2. Verification of a student's eligibility for dorm admission based on their coupon count.
+1. Display of one or all student data including name, ID, and coupon count.
+2. Display all current activites, including name and ID.
+3. Display the activities that a student joins.
+4. Verification of a student's eligibility for dorm admission based on their coupon count.
 
-For more information, please check the code files in the `src` and `include` directories, and the data in the `data` directory.
+For more information, please check the code files in the `src` directory, and the data in the `data` directory.
 
 ## Structs
 
-- `Student`: This class represents students, with attributes for Name, ID, and Coupon count.
-- `Activity`: This class represents university activities, with attributes for Name and ID
+-   `Student`: This class represents students, with attributes for Name, ID, and Coupon count.
+-   `Activity`: This class represents university activities, with attributes for Name and ID
