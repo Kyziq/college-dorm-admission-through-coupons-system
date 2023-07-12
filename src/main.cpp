@@ -199,7 +199,7 @@ Student *findStudentById(const string &id)
             return &students[i]; // return the student
     }
     // If student is not found, throw an exception
-    throw runtime_error("Student not found.");
+    throw runtime_error("Student not found!");
 }
 
 // Find an activity by their id
@@ -211,7 +211,7 @@ Activity *findActivityById(const string &id)
             return &activities[i]; // return the activity
     }
     // If activity is not found, throw an exception
-    throw runtime_error("Activity not found.");
+    throw runtime_error("Activity not found!");
 }
 
 /** Display Functions **/
@@ -230,7 +230,7 @@ void displaySingleStudent()
     }
     else
     {
-        cerr << "Student not found.\n";
+        cerr << "Student not found!\n";
     }
 }
 void displayAllStudents()
@@ -286,7 +286,7 @@ void displayStudentActivities(const string &id)
             else // If the activity was not found
             {
                 // If activity is not found, throw an exception
-                throw runtime_error("Activity not found.");
+                throw runtime_error("Activity not found!");
             }
         }
         cout << '\n';
@@ -294,8 +294,21 @@ void displayStudentActivities(const string &id)
     else
     {
         // If student is not found, throw an exception
-        throw runtime_error("Student not found.");
+        throw runtime_error("Student not found!");
     }
+}
+
+/** etc Functions **/
+bool studentExists(const string &stuId)
+{
+    for (int i = 0; i < numStudents; i++)
+    {
+        if (students[i].id == stuId)
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 int main()
@@ -338,15 +351,23 @@ int main()
                 string stuId, stuName;
                 cout << "Enter the new student's ID: ";
                 cin >> stuId;
-                cin.ignore(); // Clear the newline character from the input buffer
-                cout << "Enter the new student's name: ";
-                getline(cin, stuName);
 
-                // Add the new student to the students array and save the updated students array to the file
-                students[numStudents] = {stuId, stuName, 0};
-                numStudents++;
-                saveStudents();
-                cout << "The student has been registered!\n\n";
+                if (!studentExists(stuId)) // If the student was not found, continue
+                {
+                    cin.ignore(); // Clear the newline character from the input buffer
+                    cout << "Enter the new student's name: ";
+                    getline(cin, stuName);
+
+                    // Add the new student to the students array and save the updated students array to the file
+                    students[numStudents] = {stuId, stuName, 0};
+                    numStudents++;
+                    saveStudents();
+                    cout << "The student has been registered!\n\n";
+                }
+                else
+                {
+                    cerr << "Student not found!\n\n";
+                }
             }
             else if (choice == 2) // Add coupon to student
             {
@@ -419,14 +440,14 @@ int main()
             }
             else if (choice == 3) // Check student dorm status
             {
-                string id;
+                string stuId;
                 cout << "Enter student ID: ";
-                cin >> id;
+                cin >> stuId;
 
-                // Find the student in the students array
-                Student *student = findStudentById(id);
-                if (student)
+                if (!studentExists(stuId)) // If the student was not found, continue
                 {
+                    // Find the student in the students array
+                    Student *student = findStudentById(stuId);
                     if (student->coupons >= 10)
                     {
                         cout << "Student is eligible for dorm admission!\n\n";
@@ -441,6 +462,7 @@ int main()
                     cerr << "Student not found!\n\n";
                 }
             }
+
             else if (choice == 4) // Display all students
             {
                 int choice4;
