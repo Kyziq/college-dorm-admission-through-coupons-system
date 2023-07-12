@@ -27,7 +27,6 @@ certain number of these coupons qualifies them for college dorm admission.
 using namespace std;
 
 /***** Struct *****/
-
 struct Student
 {
     string id;
@@ -59,9 +58,84 @@ const string STUDENTS_FILE = "../data/students.txt";
 const string ACTIVITIES_FILE = "../data/activities.txt";
 const string PARTICIPATIONS_FILE = "../data/participations.txt";
 
-/***** Helper Functions *****/
+// Exception Classes
+class NotFoundException : public runtime_error
+{
+public:
+    NotFoundException(const string &entity) : runtime_error(entity + " not found!") {}
+};
 
-/** Helper Functions - Data Loading **/
+class InvalidChoiceException : public runtime_error
+{
+public:
+    InvalidChoiceException() : runtime_error("Invalid choice. Please enter a valid choice!") {}
+};
+
+// Check student exist, if yes, return true
+bool studentExists(const string &stuId)
+{
+    for (int i = 0; i < numStudents; i++)
+    {
+        if (students[i].id == stuId)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+// Check activity exist, if yes, return true
+bool activityExists(const string &actId)
+{
+    for (int i = 0; i < numActivities; i++)
+    {
+        if (activities[i].id == actId)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+// Throw a NotFoundException if the student does not exist
+void checkStudentExists(const string &stuId)
+{
+    if (!studentExists(stuId))
+    {
+        throw NotFoundException("Student");
+    }
+}
+
+// Throw a NotFoundException if the student or activity does not exist
+void checkStudentNotExists(const string &stuId)
+{
+    if (studentExists(stuId))
+    {
+        throw runtime_error("Student already exists!");
+    }
+}
+
+// Throw a NotFoundException if activity does not exist
+void checkActivityExists(const string &actId)
+{
+    if (!activityExists(actId))
+    {
+        throw NotFoundException("Activity");
+    }
+}
+
+// Function to find the index of a student by their id
+int findStudentIndex(const string &id)
+{
+    for (int i = 0; i < numStudents; i++)
+    {
+        if (students[i].id == id)
+            return i; // return the index of the student
+    }
+    // If student is not found, throw an exception
+    throw NotFoundException("Student");
+}
+
 // Function to load students data from the file
 void loadStudents()
 {
@@ -153,7 +227,6 @@ void loadParticipations()
     inputFile.close();
 }
 
-/** Helper Functions - Data Saving and Searching **/
 // Function to save students data to the file
 void saveStudents()
 {
@@ -198,8 +271,7 @@ Student *findStudentById(const string &id)
         if (students[i].id == id)
             return &students[i]; // return the student
     }
-    // If student is not found, throw an exception
-    throw runtime_error("Student not found!");
+    throw NotFoundException("Student"); // If student is not found, throw an exception
 }
 
 // Find an activity by their id
@@ -210,11 +282,9 @@ Activity *findActivityById(const string &id)
         if (activities[i].id == id)
             return &activities[i]; // return the activity
     }
-    // If activity is not found, throw an exception
-    throw runtime_error("Activity not found!");
+    throw NotFoundException("Activity"); // If activity is not found, throw an exception
 }
 
-/** Display Functions **/
 // Print the details of all students
 void displaySingleStudent()
 {
@@ -230,7 +300,7 @@ void displaySingleStudent()
     }
     else
     {
-        cerr << "Student not found!\n";
+        throw NotFoundException("Student"); // If student is not found, throw an exception
     }
 }
 void displayAllStudents()
@@ -283,32 +353,77 @@ void displayStudentActivities(const string &id)
             {
                 cout << "ID: " << activity->id << ", Name: " << activity->name << '\n';
             }
-            else // If the activity was not found
+            else
             {
-                // If activity is not found, throw an exception
-                throw runtime_error("Activity not found!");
+                throw NotFoundException("Activity"); // If activity is not found, throw an exception
             }
         }
         cout << '\n';
     }
     else
     {
-        // If student is not found, throw an exception
-        throw runtime_error("Student not found!");
+        throw NotFoundException("Student"); // If student is not found, throw an exception
     }
 }
 
-/** etc Functions **/
-bool studentExists(const string &stuId)
+// Check for student's dorm status
+void checkDormStatus(const string &stuId)
 {
-    for (int i = 0; i < numStudents; i++)
+    // Find the student in the students array
+    Student *student = findStudentById(stuId);
+    if (student->coupons >= 10)
+        cout << "Student is eligible for dorm admission!\n\n";
+    else
+        cout << "Student is not eligible for dorm admission.\n\n";
+}
+
+void addCouponToStudent(const string &stuId, const string &actId)
+{
+    int studentIndex = findStudentIndex(stuId);
+    // Check if the student has already participated in this activity
+    bool alreadyParticipated = false;
+    for (int i = 0; i < numParticipations[studentIndex]; i++)
     {
-        if (students[i].id == stuId)
+        if (participations[studentIndex][i] == actId)
         {
-            return true;
+            alreadyParticipated = true;
+            break;
         }
     }
-    return false;
+
+    if (alreadyParticipated)
+    {
+        throw runtime_error("The student has already participated in this activity.\n\n");
+    }
+    else
+    {
+        // Add a coupon to the student
+        students[studentIndex].coupons++;
+
+        // Add the activity to the student's participations
+        participations[studentIndex][numParticipations[studentIndex]] = actId;
+        numParticipations[studentIndex]++;
+
+        // Save the updated students and participations data to the files
+        saveStudents();
+        saveParticipations();
+
+        cout << "A coupon has been added to the student, and the activity has been added to the student's participations.\n\n";
+    }
+}
+
+// Display main menu
+void displayMenu()
+{
+    cout << "Welcome to the College Dorm Admission through Coupons (CDAC) System!\n"
+         << "1 - Register a new student\n"
+         << "2 - Add a coupon to a student\n"
+         << "3 - Check a student's dorm eligibility\n"
+         << "4 - Display student(s)\n"
+         << "5 - Display all activities\n"
+         << "6 - Display a student's activities\n"
+         << "7 - Exit the program\n"
+         << "Enter your choice: ";
 }
 
 int main()
@@ -331,175 +446,101 @@ int main()
     while (true)
     {
         // Display the main menu and get the user's choice
-        cout << "Welcome to the College Dorm Admission through Coupons (CDAC) System!\n"
-             << "1 - Register a new student\n"
-             << "2 - Add a coupon to a student\n"
-             << "3 - Check a student's dorm eligibility\n"
-             << "4 - Display student(s)\n"
-             << "5 - Display all activities\n"
-             << "6 - Display a student's activities\n"
-             << "7 - Exit the program\n"
-             << "Enter your choice: ";
+        displayMenu();
         int choice;
         cin >> choice;
 
         try
         {
-            if (choice == 1) // Register a new student
+            string stuId, actId;
+            int studentIndex;
+
+            switch (choice)
             {
-                // Get the new student's information from the user
-                string stuId, stuName;
+            case 1: // Register a new student
+            {
                 cout << "Enter the new student's ID: ";
                 cin >> stuId;
+                checkStudentNotExists(stuId);
+                cin.ignore(); // Clear the newline character from the input buffer
+                string stuName;
+                cout << "Enter the new student's name: ";
+                getline(cin, stuName);
 
-                if (!studentExists(stuId)) // If the student was not found, continue
-                {
-                    cin.ignore(); // Clear the newline character from the input buffer
-                    cout << "Enter the new student's name: ";
-                    getline(cin, stuName);
-
-                    // Add the new student to the students array and save the updated students array to the file
-                    students[numStudents] = {stuId, stuName, 0};
-                    numStudents++;
-                    saveStudents();
-                    cout << "The student has been registered!\n\n";
-                }
-                else
-                {
-                    cerr << "Student not found!\n\n";
-                }
+                // Add the new student to the students array and save the updated students array to the file
+                students[numStudents] = {stuId, stuName, 0};
+                numStudents++;
+                saveStudents();
+                cout << "The student has been registered!\n\n";
+                break;
             }
-            else if (choice == 2) // Add coupon to student
+            case 2: // Add coupon to student
             {
-                string stuId, actId;
                 cout << "Enter student ID: ";
                 cin >> stuId;
+                checkStudentExists(stuId);
+                // Display all activities and get the activity ID from the user
+                displayAllActivities();
+                cout << "Enter the activity ID that the student participated in: ";
+                cin >> actId;
+                checkActivityExists(actId);
 
-                // Find the student in the students array
-                int studentIndex = -1;
-                for (int i = 0; i < numStudents; i++)
-                {
-                    if (students[i].id == stuId)
-                    {
-                        studentIndex = i;
-                        break;
-                    }
-                }
-
-                if (studentIndex != -1) // If the student was found
-                {
-                    // Display all activities and get the activity ID from the user
-                    displayAllActivities();
-                    cout << "Enter the activity ID that the student participated in: ";
-                    cin >> actId;
-
-                    // Find the activity in the activities array
-                    Activity *activity = findActivityById(actId);
-                    if (activity) // If the activity was found
-                    {
-                        // Check if the student has already participated in this activity
-                        bool alreadyParticipated = false;
-                        for (int i = 0; i < numParticipations[studentIndex]; i++)
-                        {
-                            if (participations[studentIndex][i] == actId)
-                            {
-                                alreadyParticipated = true;
-                                break;
-                            }
-                        }
-
-                        if (alreadyParticipated)
-                        {
-                            cerr << "The student has already participated in this activity.\n\n";
-                        }
-                        else
-                        {
-                            // Add a coupon to the student
-                            students[studentIndex].coupons++;
-
-                            // Add the activity to the student's participations
-                            participations[studentIndex][numParticipations[studentIndex]] = actId;
-                            numParticipations[studentIndex]++;
-
-                            // Save the updated students and participations data to the files
-                            saveStudents();
-                            saveParticipations();
-
-                            cout << "A coupon has been added to the student, and the activity has been added to the student's participations.\n\n";
-                        }
-                    }
-                    else // If the activity was not found
-                    {
-                        cerr << "Activity not found!\n\n";
-                    }
-                }
-                else
-                {
-                    cerr << "Student not found!\n\n";
-                }
+                addCouponToStudent(stuId, actId);
+                break;
             }
-            else if (choice == 3) // Check student dorm status
+            case 3: // Check student dorm status
             {
-                string stuId;
                 cout << "Enter student ID: ";
                 cin >> stuId;
+                checkStudentExists(stuId);
 
-                if (!studentExists(stuId)) // If the student was not found, continue
-                {
-                    // Find the student in the students array
-                    Student *student = findStudentById(stuId);
-                    if (student->coupons >= 10)
-                    {
-                        cout << "Student is eligible for dorm admission!\n\n";
-                    }
-                    else
-                    {
-                        cout << "Student is not eligible for dorm admission.\n\n";
-                    }
-                }
-                else
-                {
-                    cerr << "Student not found!\n\n";
-                }
+                // Check student's dorm status
+                checkDormStatus(stuId);
+                break;
             }
-
-            else if (choice == 4) // Display all students
+            case 4: // Display all students
             {
                 int choice4;
                 cout << "Do you want to display a student (Input 1) or all students (Input 2)? : ";
                 cin >> choice4;
-                if (choice4 == 1)
+                switch (choice4)
                 {
+                case 1:
+                    cout << "Enter student ID: ";
+                    cin >> stuId;
+                    checkStudentExists(stuId);
                     displaySingleStudent();
-                }
-                else if (choice4 == 2)
-                {
+                    break;
+                case 2:
                     displayAllStudents();
+                    break;
+                default:
+                    throw InvalidChoiceException();
                 }
-                else
-                {
-                    cerr << "Invalid choice. Please enter from 1 to 2!\n";
-                }
+                break;
             }
-            else if (choice == 5) // Display all activities
+            case 5: // Display all activities
             {
                 displayAllActivities();
+                break;
             }
-            else if (choice == 6) // Display student activities
+            case 6: // Display student activities
             {
-                string id;
                 cout << "Enter student ID: ";
-                cin >> id;
-                displayStudentActivities(id);
+                cin >> stuId;
+                checkStudentExists(stuId);
+                displayStudentActivities(stuId);
+                break;
             }
-            else if (choice == 7) // Exit
+            case 7: // Exit
             {
                 cout << "Exiting the program.\n";
                 break;
             }
-            else
+            default:
             {
-                cerr << "Invalid choice. Please enter from 1 to 6!\n";
+                throw InvalidChoiceException();
+            }
             }
         }
         catch (const runtime_error &e)
