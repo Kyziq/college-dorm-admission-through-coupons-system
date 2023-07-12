@@ -547,6 +547,16 @@ int main()
         {
             cerr << "An error occurred: " << e.what() << "\n\n";
         }
+
+        char continueChoice;
+        cout << "Do you want to continue (Y/N)? : ";
+        cin >> continueChoice;
+        if (continueChoice == 'N' || continueChoice == 'n')
+        {
+            cout << "Exiting the program.";
+            break; // Break out of the loop
+        }
+        cout << endl;
     }
     return 0;
 }
