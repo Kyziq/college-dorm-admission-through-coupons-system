@@ -34,14 +34,13 @@ CDAC-System
 
 The CDAC system employs various concepts of C++ programming:
 
-1. FUNCTION CONCEPT
-2. POINTER CONCEPT
-3. STRUCT CONCEPT
-4. TEXT FILES CONCEPT
-5. INPUT OUTPUT FILES CONCEPT
-6. ONE DIMENSIONAL AND TWO-DIMENSIONAL ARRAY CONCEPTS
-7. CALCULATION
-8. EXCEPTION HANDLING (ERROR HANDLING)
+`Function`
+,`Pointer`
+,`Struct`
+,`Text Files`
+,`Input Output Files`
+,`1-D and 2-D Array`
+,`Exception Handling (Error Handling)`
 
 ## Sample Outputs
 
